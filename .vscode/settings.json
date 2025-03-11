@@ -1,0 +1,6 @@
+{
+  "conventionalCommits.scopes": [
+    "features add dockerfile",
+    "features add docker compose"
+  ]
+}
