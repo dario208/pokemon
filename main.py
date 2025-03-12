@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Depends, HTTPException
 from sqlmodel import Session, select
-from models import Pokemon
-from database import init_db, get_session
+from models.pokemon_models import Pokemon
+from core.database import init_db, get_session
 
 app = FastAPI()
 
