@@ -1,8 +1,10 @@
-version: '4.8'
+version: '3.8'
 services:
   pokemon-db:
     image: postgres:15
     restart: always
+    env_file:
+      - .env
     environment:
       POSTGRES_USER: ${POKEMON_USER}
       POSTGRES_PASSWORD: ${POKEMON_PASSWORD}
@@ -11,26 +13,43 @@ services:
       - "5432:5432"
     volumes:
       - pokemon_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POKEMON_USER} -d ${POKEMON_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
-  pokemon-api:
-    build: .
-    depends_on:
-      - db
-    environment:
-      DATABASE_URL: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db/${POSTGRES_DB}"
-    ports:
-      - "8000:8020"
-    volumes:
-      - .:/app
+  #pokemon-api:
+  #  build: .
+  #  restart: always
+  #  depends_on:
+  #    pokemon-db:
+  #      condition: service_healthy
+  #  environment:
+  #    DATABASE_URL: "postgresql://${POKEMON_USER}:${POKEMON_PASSWORD}@pokemon-db:5432/${POKEMON_DB}"
+  #  ports:
+  #    - "8020:8020"
+  #  volumes:
+  #    - .:/app
+  #  healthcheck:
+  #    test: ["CMD", "curl", "-f", "http://localhost:8020/docs"]
+  #    interval: 30s
+  #    timeout: 10s
+  #    retries: 3
 
   adminer:
     image: adminer
     restart: always
+    depends_on:
+      - pokemon-db
     ports:
       - "8080:8080"
     environment:
       ADMINER_DESIGN: pepa-linha-dark
+      ADMINER_DEFAULT_SERVER: pokemon-db
+
 volumes:
   pokemon_data:
+    name: pokemon_data
     external: true
-
+      
