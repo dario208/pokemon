@@ -48,3 +48,6 @@ def delete_pokemon(pokemon_id: int, session: Session = Depends(get_session)):
     session.delete(pokemon)
     session.commit()
     return {"ok": True}
+@app.get("/")
+def read_root():
+    return {"message": "Welcome to this fantastic app!"}
