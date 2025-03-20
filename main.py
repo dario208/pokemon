@@ -51,3 +51,22 @@ def delete_pokemon(pokemon_id: int, session: Session = Depends(get_session)):
 @app.get("/")
 def read_root():
     return {"message": "Welcome to this fantastic app!"}
+
+@app.get("/pokedex/")
+def read_pokedex(pokemon_id: int, session: Session = Depends(get_session)):
+    pokemon = session.get(Pokemon, pokemon_id)
+    if not pokemon:
+        raise HTTPException(status_code=404, detail="Pokemon not found")
+    return {
+        "name": pokemon.name,
+        "types": pokemon.types,
+        "total": pokemon.total,
+        "hp": pokemon.hp,
+        "attack": pokemon.attack,
+        "defense": pokemon.defense,
+        "attack_special": pokemon.attack_special,
+        "defense_special": pokemon.defense_special,
+        "speed": pokemon.speed,
+        "evolution_id": pokemon.evolution_id
+    }
+    
